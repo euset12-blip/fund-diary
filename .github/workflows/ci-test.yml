@@ -5,6 +5,7 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   check:
@@ -17,7 +18,11 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          node --version
+          npm --version
+          ls package.json package-lock.json
+          npm install 2>&1
 
       - name: 语法检查（全项目 JS 文件）
         run: |
