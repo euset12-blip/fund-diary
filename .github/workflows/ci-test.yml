@@ -1,4 +1,4 @@
-name: 语法检查 + 测试
+name: CI Test
 
 on:
   push:
