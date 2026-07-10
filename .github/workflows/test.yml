@@ -17,7 +17,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: 语法检查（全项目 JS 文件）
         run: |
