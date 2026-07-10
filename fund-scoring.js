@@ -214,8 +214,15 @@ function scoreTrend(historyNav, valuation) {
   if (ma20v > 0) {
     const pctFromMA20 = ((last - ma20v) / ma20v) * 100;
     detail.pctFromMA20 = pctFromMA20;
-    if (pctFromMA20 > 5) { score -= 10; signals.push('⚠️ 偏离MA20过远，短期超买'); }
-    else if (pctFromMA20 >= 0) { score += 15; }
+    if (pctFromMA20 > 10) {
+      score -= 25;
+      detail.overboughtPenalty = 'severe';
+      signals.push('⚠️ 严重偏离MA20，短期超买风险极大');
+    } else if (pctFromMA20 > 5) {
+      score -= 10;
+      detail.overboughtPenalty = 'moderate';
+      signals.push('⚠️ 偏离MA20过远，短期超买');
+    } else if (pctFromMA20 >= 0) { score += 15; }
     else if (pctFromMA20 > -5) { score -= 5; signals.push('⚠️ 价格在MA20下方'); }
     else { score -= 20; signals.push('❌ 深度破位MA20'); }
   }
@@ -681,9 +688,10 @@ function printResults(data, options = {}) {
 }
 
 // ═══════════════════════════════════════════
-// 入口
+// 入口（仅直接运行时执行）
 // ═══════════════════════════════════════════
 
+if (require.main === module) {
 (async () => {
   const args = process.argv.slice(2);
   const options = {
@@ -719,3 +727,6 @@ function printResults(data, options = {}) {
     printResults(data, options);
   }
 })();
+} // end require.main === module
+
+module.exports = { calcMA, scoreTrend, scoreMomentum, scoreFlow, scoreDrawdown, scoreSectorHeat, fmtMoney, getAction };

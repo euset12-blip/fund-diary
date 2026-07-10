@@ -99,4 +99,36 @@ function writeHoldings(holdings) {
   fs.writeFileSync(filePath, JSON.stringify(holdings, null, 2), 'utf-8');
 }
 
-module.exports = { readHoldings, writeHoldings };
+/**
+ * 归一化单条持仓数据 — 补充 name/sector 元数据 + 统一字段
+ * @param {Object} raw - 原始持仓数据 { code, name?, shortName?, holdAmount, totalInvested, profit?, profitAmount? }
+ * @param {Object} config - fund-config 对象 { fundIndexMap: { [code]: { name, sector } } }
+ * @returns {Object} 归一化后 { code, name, sector, holdAmount, totalInvested, profit, profitLoss }
+ */
+function normalizeHolding(raw, config) {
+  const map = ((config && config.fundIndexMap) || {})[raw.code] || {};
+  const holdAmount = parseFloat(raw.holdAmount) || 0;
+  const totalInvested = parseFloat(raw.totalInvested) || 0;
+
+  // profit 来源优先级: profit > profitAmount > (holdAmount - totalInvested)
+  let profit;
+  if (raw.profit !== undefined && raw.profit !== null) {
+    profit = parseFloat(raw.profit);
+  } else if (raw.profitAmount !== undefined && raw.profitAmount !== null) {
+    profit = parseFloat(raw.profitAmount);
+  } else {
+    profit = Math.round((holdAmount - totalInvested) * 100) / 100;
+  }
+
+  return {
+    code: raw.code,
+    name: map.name || raw.name || raw.shortName || raw.code,
+    sector: map.sector || '',
+    holdAmount,
+    totalInvested,
+    profit,
+    profitLoss: profit,   // legacy alias
+  };
+}
+
+module.exports = { readHoldings, writeHoldings, normalizeHolding };
