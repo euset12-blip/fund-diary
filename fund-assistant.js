@@ -1330,7 +1330,7 @@ async function runActionMode(fundCodes) {
 
   // 尝试从养基宝拉数据
   try {
-    yjbData = await yjbApi.fetchAllData('7442900');
+    yjbData = await yjbApi.fetchAllData(process.env.YJB_ACCOUNT_ID || '');
     if (yjbData.indexData) {
       const idxMap = yjbApi.normalizeIndexData(yjbData.indexData);
       shComp = idxMap['1.000001'] || null;
@@ -2721,7 +2721,7 @@ async function runAskMode(question, holdingsData, CONFIG) {
   let yjbMap = {};
   try {
     const yjbData = await Promise.race([
-      yjbApi.fetchAllData('7442900').catch(() => null),
+      yjbApi.fetchAllData(process.env.YJB_ACCOUNT_ID || '').catch(() => null),
       new Promise(r => setTimeout(() => r(null), 6000)),
     ]);
     const yjbH = yjbData?.holdings ? yjbApi.normalizeHoldings(yjbData.holdings) : [];

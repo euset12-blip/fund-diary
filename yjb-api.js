@@ -153,7 +153,7 @@ async function searchFund(keyword) {
  * 一站式：获取持仓 + 指数 + 收益汇总
  * 用于 fund-assistant.js 的全量数据入口
  *
- * @param {string} accountId - 支付宝账户 ID（默认 7442900）
+ * @param {string} accountId - 支付宝账户 ID（通过环境变量 YJB_ACCOUNT_ID 设置）
  * @returns {Object} { indexData, summary, holdings }
  */
 async function fetchAllData(accountId = '') {

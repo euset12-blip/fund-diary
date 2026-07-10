@@ -71,7 +71,7 @@ app.get('/api/dashboard', async (req, res) => {
   try {
     // 养基宝数据（8秒超时保护）
     const yjbData = await Promise.race([
-      yjbApi.fetchAllData('7442900').catch(() => null),
+      yjbApi.fetchAllData(process.env.YJB_ACCOUNT_ID || '').catch(() => null),
       new Promise(r => setTimeout(() => r(null), 8000)),
     ]);
     const holdings = yjbData?.holdings ? yjbApi.normalizeHoldings(yjbData.holdings) : [];
@@ -216,7 +216,7 @@ app.post('/api/chat', async (req, res) => {
     let yjbHoldings = [];
     try {
       const yjbData = await Promise.race([
-        yjbApi.fetchAllData('7442900').catch(() => null),
+        yjbApi.fetchAllData(process.env.YJB_ACCOUNT_ID || '').catch(() => null),
         new Promise(r => setTimeout(() => r(null), 8000)),
       ]);
       yjbHoldings = yjbData?.holdings ? yjbApi.normalizeHoldings(yjbData.holdings) : [];
