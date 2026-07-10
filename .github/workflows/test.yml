@@ -1,0 +1,38 @@
+name: 语法检查 + 测试
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 语法检查（全项目 JS 文件）
+        run: |
+          echo "=== 语法检查 ==="
+          FAIL=0
+          for f in fund-scoring.js fund-assistant.js server.js deep-analyze.js \
+                   holdings-io.js yjb-api.js sector-volume.js update-holdings.js \
+                   backtest.js optimize-strategy.js scan-sectors.js \
+                   lib/*.js; do
+            if [ -f "$f" ]; then
+              node --check "$f" && echo "  ✅ $f" || { echo "  ❌ $f"; FAIL=1; }
+            fi
+          done
+          exit $FAIL
+
+      - name: 单元测试（vitest）
+        run: npx vitest run --reporter=verbose

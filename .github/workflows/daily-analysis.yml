@@ -1,0 +1,36 @@
+name: 每日基金分析
+
+on:
+  schedule:
+    # UTC 6:30 = 北京时间 14:30（收盘前 30 分钟，数据最全）
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 操作指令 + 邮件推送
+        run: node fund-assistant.js --action
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_TO: ${{ secrets.SMTP_TO }}
+          YJB_ACCOUNT_ID: ${{ secrets.YJB_ACCOUNT_ID }}
+          YJB_API_SECRET: ${{ secrets.YJB_API_SECRET }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}

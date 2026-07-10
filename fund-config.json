@@ -1,0 +1,92 @@
+{
+  "_说明": "养基日记统一配置 — 所有脚本共读此文件。部署到 VPS 后请 chmod 600。",
+  "_lastUpdated": "2026-06-10",
+
+  "email": {
+    "_说明": "邮箱配置现在从 .env 环境变量加载，fund-config.json 仅保留非敏感字段",
+    "enabled": true,
+    "host": "smtp.qq.com",
+    "port": 465
+  },
+
+  "indices": {
+    "1.000001": "上证指数",
+    "1.000300": "沪深300",
+    "0.399006": "创业板指",
+    "1.688000": "科创50",
+    "0.399001": "深证成指"
+  },
+
+  "sectorMap": {
+    "BK0485": "旅游酒店", "BK0486": "证券", "BK0487": "银行",
+    "BK0488": "保险", "BK0489": "房地产", "BK0490": "工程建设",
+    "BK0491": "汽车", "BK0492": "家电", "BK0493": "食品饮料",
+    "BK0494": "医药制造", "BK0495": "医疗", "BK0496": "电子元件",
+    "BK0497": "软件服务", "BK0498": "通信", "BK0499": "电子信息",
+    "BK0500": "文化传媒", "BK0501": "电力", "BK0502": "煤炭",
+    "BK0503": "石油", "BK0504": "钢铁", "BK0505": "有色金属",
+    "BK0506": "化工", "BK0507": "机械", "BK0508": "航天航空",
+    "BK0509": "船舶制造", "BK0510": "交运设备", "BK0511": "输配电气",
+    "BK0512": "环保工程", "BK0513": "公用事业", "BK0514": "纺织服装",
+    "BK0515": "农牧饲渔", "BK0516": "水泥建材", "BK0517": "玻璃陶瓷",
+    "BK0518": "商业百货", "BK0519": "酿酒", "BK0520": "医疗美容",
+    "BK0521": "半导体", "BK0522": "光伏", "BK0523": "锂电池",
+    "BK0524": "新能源", "BK0525": "军工", "BK0526": "人工智能",
+    "BK0527": "机器人", "BK0528": "数字经济", "BK0529": "创新药",
+    "BK0530": "储能", "BK0531": "氢能源", "BK0532": "信创",
+    "BK0533": "数据要素", "BK0534": "低空经济",
+    "BK0459": "芯片", "BK0460": "5G概念", "BK0461": "国产软件",
+    "BK0462": "云计算", "BK0463": "大数据", "BK0464": "物联网",
+    "BK0465": "区块链", "BK0466": "虚拟现实", "BK0467": "无人驾驶",
+    "BK0468": "工业互联", "BK0469": "网络安全", "BK0470": "在线教育",
+    "BK0471": "远程办公", "BK0472": "网红直播", "BK0473": "免税概念",
+    "BK0474": "地摊经济", "BK0475": "字节概念", "BK0476": "鸿蒙概念",
+    "BK0477": "元宇宙", "BK0478": "东数西算", "BK0479": "ChatGPT",
+    "BK0480": "CPO概念", "BK0481": "算力概念", "BK0482": "光通信模块",
+    "BK0483": "星闪概念", "BK0484": "新质生产力"
+  },
+
+  "fundStrategy": {
+    "_说明": "基于全量回测的最优策略: stop_loss=MA止损 | hold_dip=持有补仓 | light_stop=轻仓止损",
+    "004253": { "type": "stop_loss", "ma": 30, "desc": "黄金" },
+    "009034": { "type": "stop_loss", "ma": 30, "desc": "黄金" },
+    "012349": { "type": "light_stop", "ma": 30, "desc": "港股" },
+    "006479": { "type": "hold_dip", "ma": 15, "desc": "美股" },
+    "019305": { "type": "hold_dip", "ma": 15, "desc": "美股" },
+    "017641": { "type": "hold_dip", "ma": 15, "desc": "美股" },
+    "270042": { "type": "hold_dip", "ma": 15, "desc": "美股" },
+    "018064": { "type": "hold_dip", "ma": 15, "desc": "美股" },
+    "008164": { "type": "hold_dip", "ma": 20, "desc": "红利" },
+    "023639": { "type": "hold_dip", "ma": 20, "desc": "电网" },
+    "025209": { "type": "hold_dip", "ma": 20, "desc": "半导体" },
+    "016874": { "type": "hold_dip", "ma": 20, "desc": "光通信" },
+    "011452": { "type": "hold_dip", "ma": 20, "desc": "质量成长" },
+    "001549": { "type": "hold_dip", "ma": 20, "desc": "上证50" },
+    "013416": { "type": "hold_dip", "ma": 20, "desc": "医疗器械" },
+    "290008": { "type": "hold_dip", "ma": 20, "desc": "锂矿" },
+    "012708": { "type": "hold_dip", "ma": 20, "desc": "红利低波" },
+    "012709": { "type": "hold_dip", "ma": 20, "desc": "红利低波" }
+  },
+
+  "fundIndexMap": {
+    "_说明": "基金→底层指数/板块映射，scoring 和 assistant 共用。type: etf-link|active-mix|qdii|commodity|hk",
+    "006479": { "secid": "100.NDX", "name": "纳斯达克100", "sector": "美股科技", "sectorBK": null, "type": "qdii" },
+    "019305": { "secid": "100.SPX", "name": "标普500", "sector": "美股大盘", "sectorBK": null, "type": "qdii" },
+    "017641": { "secid": "100.SPX", "name": "标普500", "sector": "美股大盘", "sectorBK": null, "type": "qdii" },
+    "270042": { "secid": "100.NDX", "name": "纳斯达克100", "sector": "美股科技", "sectorBK": null, "type": "qdii" },
+    "018064": { "secid": "100.SPX", "name": "标普500", "sector": "美股大盘", "sectorBK": null, "type": "qdii" },
+    "008164": { "secid": "1.000922", "name": "中证红利", "sector": "A股红利", "sectorBK": null, "_note": "红利跨板块，不适用量比", "type": "etf-link" },
+    "023639": { "secid": "90.BK0457", "name": "电网设备", "sector": "电网", "sectorBK": "BK0457", "type": "etf-link" },
+    "025209": { "secid": "90.BK1036", "name": "半导体", "sector": "半导体/存储", "sectorBK": "BK1036", "type": "active-mix" },
+    "016874": { "secid": "90.BK1592", "name": "通信线缆及配套", "sector": "光纤通信", "sectorBK": "BK1592", "type": "active-mix" },
+    "011452": { "secid": "90.BK1038", "name": "光学光电子", "sector": "光模块", "sectorBK": "BK1038", "type": "active-mix", "_note": "主动混合基金，技术信号置信度需打折" },
+    "001549": { "secid": "1.000016", "name": "上证50", "sector": "大盘蓝筹", "sectorBK": null, "type": "etf-link" },
+    "013416": { "secid": "90.BK0495", "name": "医疗器械", "sector": "医疗器械", "sectorBK": null, "_note": "东方财富板块码已下架，暂无替代" },
+    "290008": { "secid": "90.BK1303", "name": "锂电池", "sector": "锂矿链", "sectorBK": "BK1303", "type": "active-mix", "_note": "主动混合基金，技术信号置信度需打折" },
+    "012349": { "secid": "100.HSTECH", "name": "恒生科技指数", "sector": "港股科技", "sectorBK": null, "type": "hk" },
+    "012708": { "secid": "1.000922", "name": "中证红利", "sector": "红利低波", "sectorBK": null, "_note": "红利跨板块，不适用量比", "type": "etf-link" },
+    "012709": { "secid": "1.000922", "name": "中证红利", "sector": "红利低波", "sectorBK": null, "_note": "红利跨板块，不适用量比", "type": "etf-link" },
+    "004253": { "secid": "100.AU9999", "name": "上海金", "sector": "黄金", "sectorBK": null, "type": "commodity" },
+    "009034": { "secid": "100.AU9999", "name": "上海金", "sector": "黄金", "sectorBK": null, "type": "commodity" }
+  }
+}
