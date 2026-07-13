@@ -16,18 +16,18 @@
 
 ## 第二步：养基宝登录（需要自己扫二维码）
 
-> ⚠️ 这一步需要你**自己拿手机扫二维码**，Claude 帮不了你。但 Claude 会帮你把命令跑好、二维码打出来。
+> ⚠️ 这一步需要你**自己拿手机扫二维码**，AI 帮不了你。
 
-用养基宝 APP 扫描二维码登录，token 会自动保存到 `~/.yjb_token.json`，之后 Node.js 和 Python 共享这个 token。
+```bash
+pip install requests qrcode Pillow
+python yjb-api/yjb_tool.py --login
+```
 
-登录步骤（Claude 会引导你）：
-1. Claude 先确认你有 Python 3 + pip
-2. 帮你 `pip install requests qrcode Pillow`（如果没装的话）
-3. 运行 `python yjb-api/yjb_tool.py --login`
-4. 终端里会显示一个二维码，你用**养基宝 APP** 扫码
-5. 扫完自动保存 token，然后 Claude 会自动拉你的持仓验证
+终端会显示二维码 → 打开手机上的**养基宝 APP** 扫码 → Token 自动保存到 `~/.yjb_token.json`，完成。
 
-> 💡 如果你的终端不支持显示二维码（比如 Windows CMD），Claude 会给你一个链接，在浏览器打开扫码。
+> **不需要**去养基宝 APP 里翻 API Secret——代码已内置默认值，直接登录就能用。
+>
+> 如果 AI 助手追着你要 `YJB_API_SECRET`，告诉它"不管这个，直接跑 `python yjb_tool.py --login` 让我扫码"。
 
 ## 第三步：找到你的账户 ID
 

@@ -138,9 +138,8 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 ### 前置条件
 
 - Node.js 20+
-- Python 3.8+（养基宝登录脚本）
-- QQ 邮箱（发送分析报告）
-- DeepSeek API Key → [platform.deepseek.com](https://platform.deepseek.com/api_keys)
+- Python 3.8+（养基宝扫码登录用）
+- 手机上装好**养基宝 APP**（扫码登录时需要）
 
 ### 1. 克隆 & 安装
 
@@ -148,27 +147,40 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 git clone https://github.com/euset12-blip/fund-diary.git
 cd fund-diary
 npm install
-pip install requests
+pip install requests qrcode Pillow
 ```
 
-### 2. 配置
+### 2. 登录养基宝（核心步骤）
+
+```bash
+python yjb-api/yjb_tool.py --login
+```
+
+终端会显示一个二维码 → 打开手机上的**养基宝 APP** 扫码 → Token 自动保存，完成。
+
+> **不需要**额外配置 API Secret——代码里已内置默认值，直接就能用。
+
+### 3. 验证持仓
+
+```bash
+node fund-assistant.js --holdings
+```
+
+能读到你的基金列表就说明接入成功了。
+
+### 4. 配置（按需）
 
 ```bash
 cp .env.example .env
-# 编辑 .env，填入真实值
 ```
 
-需要配置的变量见 [`.env.example`](./.env.example)：SMTP 邮箱、养基宝 API Secret、DeepSeek API Key。
+| 功能 | 需要配置的变量 | 不配会怎样 |
+|------|--------------|-----------|
+| 持仓数据 | 无（养基宝扫码即可） | — |
+| AI 解读 | `DEEPSEEK_API_KEY` | 跳过 AI 解读，量化数据照常输出 |
+| 邮件推送 | `SMTP_USER` / `SMTP_PASS` / `SMTP_TO` | 不发邮件，终端输出照常 |
 
-### 3. 登录养基宝
-
-```bash
-cd yjb-api
-python yjb_tool.py --login   # 手机扫码，Token 自动保存
-cd ..
-```
-
-### 4. 运行
+### 5. 运行
 
 ```bash
 node fund-assistant.js --holdings     # 查看持仓
