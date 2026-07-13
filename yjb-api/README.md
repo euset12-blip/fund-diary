@@ -69,7 +69,6 @@ python yjb_tool.py --login --debug  # 登录 + 看详细日志
 
 - Base URL: `http://browser-plug-api.yangjibao.com`
 - 认证方式：Token + MD5 签名（签名所需的 Secret 已内置默认值，无需手动配置）
-- 所有请求通过 HTTPS 加密
 
 ## 许可证
 
