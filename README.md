@@ -137,9 +137,11 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 
 ### 前置条件
 
-- Node.js 20+
-- Python 3.8+（养基宝扫码登录用）
-- 手机上装好**养基宝 APP**（扫码登录时需要）
+| 需要 | 说明 |
+|------|------|
+| Node.js 20+ | [nodejs.org](https://nodejs.org) 下载安装 |
+| Python 3.8+ | macOS/Linux 自带；Windows 去 [python.org](https://python.org) 下载 |
+| 养基宝 APP（手机） | 苹果 App Store 或安卓应用商店搜"养基宝"，扫码登录用 |
 
 ### 1. 克隆 & 安装
 
@@ -150,45 +152,61 @@ npm install
 pip install requests qrcode Pillow
 ```
 
-### 2. 登录养基宝（核心步骤）
+> 💡 如果 `pip` 报 "command not found"，试试 `pip3`。如果 `qrcode` 装不上，也可以用 `pip install requests` 只装必需的，程序会打印一个链接代替二维码。
+
+### 2. 登录养基宝
 
 ```bash
 python yjb-api/yjb_tool.py --login
 ```
 
-终端会显示一个二维码 → 打开手机上的**养基宝 APP** 扫码 → Token 自动保存，完成。
+终端会显示一个二维码（Windows CMD 可能显示不了，会给出一个 URL 链接，复制到浏览器打开就行）。
 
-> **不需要**额外配置 API Secret——代码里已内置默认值，直接就能用。
+打开手机上的**养基宝 APP**，扫码 → Token 自动保存到 `~/.yjb_token.json`，登录完成。
 
-### 3. 验证持仓
+> **不需要**手动配置 API Secret——代码已内置默认值。AI 助手如果追着你要 `YJB_API_SECRET`，告诉它："直接跑 `python yjb_tool.py --login`，让我扫码就行，Secret 用默认值。"
+>
+> 💡 如果二维码没出来，加 `--debug` 看详细日志：`python yjb-api/yjb_tool.py --login --debug`
+
+### 3. 验证
 
 ```bash
 node fund-assistant.js --holdings
 ```
 
-能读到你的基金列表就说明接入成功了。
+应该能看到你的基金列表。如果报 "未登录养基宝"，重新执行第 2 步扫码。
 
-### 4. 配置（按需）
+到此为止，你已经有了一套**可工作的持仓分析系统**——不需要配任何 env。
+
+### 4. 可选：开启 AI 解读 / 邮件
+
+只有以下两个功能需要配置，不配不影响量化分析和评分排名：
 
 ```bash
-cp .env.example .env
+cp .env.example .env   # 生成配置文件
 ```
 
-| 功能 | 需要配置的变量 | 不配会怎样 |
-|------|--------------|-----------|
-| 持仓数据 | 无（养基宝扫码即可） | — |
-| AI 解读 | `DEEPSEEK_API_KEY` | 跳过 AI 解读，量化数据照常输出 |
-| 邮件推送 | `SMTP_USER` / `SMTP_PASS` / `SMTP_TO` | 不发邮件，终端输出照常 |
+| 功能 | 要填的变量 | 不填的影响 |
+|------|-----------|-----------|
+| 🤖 AI 解读 | `DEEPSEEK_API_KEY`（去 [platform.deepseek.com](https://platform.deepseek.com/api_keys) 注册即送额度） | 操作指令不含 AI 解读段，量化数据照常 |
+| 📧 邮件推送 | `SMTP_USER` / `SMTP_PASS` / `SMTP_TO`（QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成授权码） | 只在终端输出，不发邮件 |
+
+其他变量（`YJB_API_SECRET`、`YJB_ACCOUNT_ID`、`VPS_*`）全部可选，注释掉就行。
 
 ### 5. 运行
 
 ```bash
+# 不需要任何配置就能跑：
 node fund-assistant.js --holdings     # 查看持仓
-node fund-assistant.js                # 全组合分析
-node fund-assistant.js --action       # 操作建议 + AI 解读 + 邮件
 node fund-scoring.js --simple         # 量化评分排名
+
+# 配了 DEEPSEEK_API_KEY 后：
+node fund-assistant.js                # 全组合分析 + AI 解读
+node fund-assistant.js --action       # 操作建议 + AI 解读 + 邮件
 node fund-assistant.js --ask "问题"   # AI 投资对话
-node server.js                        # 启动 Web 看板 → localhost:3848
+
+# Web 看板：
+node server.js                        # 浏览器打开 http://localhost:3848
 ```
 
 ---

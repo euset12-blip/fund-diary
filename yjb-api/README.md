@@ -1,165 +1,75 @@
 # 养基宝 Python 工具
 
-一个用于查询养基宝基金收益的命令行工具。
+用于查询养基宝基金持仓和收益的命令行工具。扫码登录后，Node.js 端通过 `yjb-api.js` 共享同一个 Token。
 
-## 功能特性
-
-- 二维码登录
-- 自动保存和加载 Token
-- 查看账户收益仪表盘
-- 搜索基金
-- 查看账户列表
-- 查看基金持仓
-- 查看收益曲线
-- 查看系统公告
-
-## 安装依赖
-
-### 基础依赖（必需）
+## 快速开始
 
 ```bash
-pip install requests
+# 1. 装依赖
+pip install requests qrcode Pillow
+
+# 2. 扫码登录（Token 自动保存到 ~/.yjb_token.json）
+python yjb_tool.py --login
+
+# 3. 验证
+python yjb_tool.py
 ```
 
-### 可选依赖（强烈推荐）
+> 💡 macOS/Linux 上如果 `pip` 找不到，用 `pip3`；如果 `python` 版本不对，用 `python3`。
+>
+> **不需要**配 API Secret —— 代码已内置默认值。
 
-安装后可以弹窗显示二维码，扫码更方便：
+## 全部命令
+
+| 命令 | 说明 |
+|------|------|
+| `python yjb_tool.py --login` | 扫码登录(加 `--debug` 看详细日志) |
+| `python yjb_tool.py` | 仪表盘 — 指数行情 + 收益概览 |
+| `python yjb_tool.py --search <代码>` | 搜索基金 |
+| `python yjb_tool.py --accounts` | 列出所有账户 ID |
+| `python yjb_tool.py --holdings <账户ID>` | 查看账户持仓 |
+| `python yjb_tool.py --income-chart` | 收益曲线 |
+| `python yjb_tool.py --income-data [账户ID]` | 收益数据 |
+| `python yjb_tool.py --notice` | 系统公告 |
+
+## 故障排查
+
+### 二维码不显示
+
+终端不支持 ASCII 二维码时会自动打印一个 URL 链接，复制到浏览器打开扫码。也可以试试装完整依赖：
 
 ```bash
 pip install qrcode[pil]
 ```
 
-**说明**：
-- macOS/Linux 系统自带 tkinter，无需额外安装
-- 如果没有安装 qrcode，程序会提供在线二维码生成链接
-
-## 使用方法
-
-### 0. 测试API连接
-
-如果遇到问题，可以先运行测试脚本：
+### "未登录" 或 Token 过期
 
 ```bash
-python3 test_api.py
+python yjb_tool.py --login
 ```
 
-这会显示详细的API请求和响应信息。
+重新扫码即可。Token 有效期通常很长，不需要频繁登录。
 
-### 1. 首次使用 - 登录（带调试信息）
+### "401 未授权" 或其他网络错误
 
 ```bash
-python3 yjb_tool.py --login --debug
+python test_api.py           # 测试 API 连通性
+python yjb_tool.py --login --debug  # 登录 + 看详细日志
 ```
 
-程序会显示二维码链接和详细的调试信息，使用养基宝APP扫描登录。Token会自动保存到 `~/.yjb_token.json`。
-
-### 2. 查看仪表盘（默认）
-
-```bash
-python3 yjb_tool.py
-```
-
-显示指数行情和收益概览。
-
-### 3. 搜索基金
-
-```bash
-python3 yjb_tool.py --search 110011
-```
-
-### 4. 查看账户列表
-
-```bash
-python3 yjb_tool.py --accounts
-```
-
-### 5. 查看账户持仓
-
-```bash
-python3 yjb_tool.py --holdings <账户ID>
-```
-
-### 6. 查看收益曲线
-
-```bash
-python3 yjb_tool.py --income-chart
-```
-
-### 7. 查看系统公告
-
-```bash
-python3 yjb_tool.py --notice
-```
-
-## 命令行参数
-
-```
---login              重新登录
---search KEYWORD     搜索基金
---accounts           列出所有账户
---holdings ID        查看账户持仓
---income-chart       查看收益曲线
---notice             查看系统公告
---debug              显示详细调试信息
-```
-
-## 故障排查
-
-### 问题：获取二维码失败
-
-1. 运行测试脚本查看详细错误：
-   ```bash
-   python3 test_api.py
-   ```
-
-2. 使用调试模式运行：
-   ```bash
-   python3 yjb_tool.py --login --debug
-   ```
-
-3. 检查网络连接是否正常
-4. 确认API地址是否可访问：`http://browser-plug-api.yangjibao.com`
-
-### 问题：Token过期
-
-使用 `--login` 重新登录：
-```bash
-python3 yjb_tool.py --login
-```
-
-## 示例输出
-
-### 仪表盘示例
-
-```
-============================================================
-养基宝仪表盘
-============================================================
-
-📈 指数行情:
-   🔴 上证指数:   3,234.56    +1.23%
-   🔴 沪深300:    4,567.89    +0.98%
-   🟢 深证成指:  11,234.56    -0.45%
-   🔴 创业板指:   2,345.67    +1.56%
-
-💰 收益概览:
-   🔴 当日收益: ¥123.45
-   🔴 收益率:   1.23%
-
-============================================================
-```
+检查是否能访问 `http://browser-plug-api.yangjibao.com`。
 
 ## 注意事项
 
-1. Token 保存在 `~/.yjb_token.json`，请妥善保管
-2. 首次使用需要使用养基宝APP扫码登录
-3. 如果 Token 过期，使用 `--login` 重新登录
+1. Token 保存在 `~/.yjb_token.json`，权限 600，Node.js (`yjb-api.js`) 和 Python 共享
+2. 首次使用需要手机上的养基宝 APP 扫码登录
+3. Token 过期后用 `--login` 重新扫码即可
 
 ## API 说明
 
-本工具使用养基宝官方API：
 - Base URL: `http://browser-plug-api.yangjibao.com`
-- 所有请求需要签名验证
+- 认证方式：Token + MD5 签名（签名所需的 Secret 已内置默认值，无需手动配置）
+- 所有请求通过 HTTPS 加密
 
 ## 许可证
 
