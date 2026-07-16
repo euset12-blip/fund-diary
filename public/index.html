@@ -107,9 +107,49 @@
     background: var(--blue); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
   }
   .chat-spinner { text-align: center; padding: 12px; color: var(--dim); }
+
+  /* ─── 引导页 ─── */
+  #onboarding { text-align: center; padding: 40px 0; }
+  #onboarding .logo { font-size: 48px; margin-bottom: 8px; }
+  #onboarding h2 { font-size: 20px; margin-bottom: 6px; }
+  #onboarding .sub { font-size: 14px; color: var(--dim); margin-bottom: 28px; }
+  #onboarding .qr-box {
+    display: inline-block; background: #fff; padding: 12px; border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  #onboarding .qr-box img { display: block; width: 220px; height: 220px; }
+  #onboarding .qr-hint { font-size: 13px; color: var(--dim); margin-bottom: 8px; }
+  #onboarding .qr-status { font-size: 12px; color: var(--gold); min-height: 18px; }
+  #onboarding .btn {
+    display: inline-block; padding: 12px 32px; border-radius: 8px; border: none;
+    background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  #onboarding .btn-ghost {
+    background: transparent; border: 1px solid var(--border); color: var(--dim);
+    font-size: 13px; padding: 8px 20px; margin-top: 12px;
+  }
+
+  #dashboard { display: none; }
+
+  /* ─── 顶部重登 ─── */
+  .relogin { font-size: 10px; color: var(--dim); cursor: pointer; text-decoration: underline; }
 </style>
 </head>
 <body>
+
+<!-- ═══ 引导页（未登录） ═══ -->
+<div id="onboarding">
+  <div class="logo">🐔</div>
+  <h2>养基日记</h2>
+  <div class="sub">基金组合量化分析工作台</div>
+  <div id="qrArea">
+    <button class="btn" onclick="startLogin()">📱 获取二维码登录</button>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP</div>
+  </div>
+</div>
+
+<!-- ═══ 主看板（已登录） ═══ -->
+<div id="dashboard">
 
 <div class="top-bar">
   <div class="title">📊 养基日记</div>
@@ -144,11 +184,98 @@
 </div>
 
 <div class="refresh-bar">
-  <span id="updateTime"></span> · 点击标题刷新
+  <span id="updateTime"></span> · <span class="relogin" onclick="doRelogin()">重新登录</span>
 </div>
 <div class="footer">养基日记 · 数据仅供参考</div>
 
+</div><!-- /dashboard -->
+
 <script>
+// ═══════════════════════════════════════════════
+// 引导登录
+// ═══════════════════════════════════════════════
+let _qrId = null;
+let _pollTimer = null;
+let _pollStart = 0;
+
+async function startLogin() {
+  const qrArea = document.getElementById('qrArea');
+  qrArea.innerHTML = '<div style="color:var(--dim)">⏳ 正在获取二维码...</div>';
+
+  try {
+    const resp = await fetch('/api/login/qrcode');
+    const data = await resp.json();
+    if (!data.ok) { qrArea.innerHTML = `<div style="color:var(--red)">获取失败：${data.error}</div><button class="btn btn-ghost" onclick="startLogin()">重试</button>`; return; }
+
+    _qrId = data.qrId;
+    _pollStart = Date.now();
+    qrArea.innerHTML = `
+      <div class="qr-box"><img src="${data.qrImage}" alt="二维码"></div>
+      <div class="qr-hint">📱 打开养基宝 APP 扫码登录</div>
+      <div class="qr-status" id="qrStatus">⏳ 等待扫码...</div>
+      <button class="btn btn-ghost" onclick="startLogin()">🔄 重新获取</button>
+    `;
+    startPolling();
+  } catch (e) {
+    qrArea.innerHTML = `<div style="color:var(--red)">网络错误：${e.message}</div><button class="btn btn-ghost" onclick="startLogin()">重试</button>`;
+  }
+}
+
+function startPolling() {
+  if (_pollTimer) clearInterval(_pollTimer);
+  _pollTimer = setInterval(pollLogin, 3000);
+}
+
+async function pollLogin() {
+  if (!_qrId) return;
+  const elapsed = (Date.now() - _pollStart) / 1000;
+
+  // 超时 120 秒
+  if (elapsed > 120) {
+    clearInterval(_pollTimer);
+    document.getElementById('qrStatus').textContent = '⏰ 二维码已过期，请重新获取';
+    _qrId = null;
+    return;
+  }
+
+  try {
+    const resp = await fetch('/api/login/check/' + _qrId);
+    const data = await resp.json();
+    if (data.status === 'done') {
+      clearInterval(_pollTimer);
+      document.getElementById('qrStatus').innerHTML = '<span style="color:var(--green)">✅ 登录成功！</span>';
+      setTimeout(showDashboard, 600);
+    } else if (data.status === 'error') {
+      document.getElementById('qrStatus').textContent = '⚠️ ' + data.error;
+    }
+    // status === 'waiting' — 继续等
+  } catch (e) {
+    // 网络抖动，忽略
+  }
+}
+
+function doRelogin() {
+  if (!confirm('重新登录需要重新扫码，确定吗？')) return;
+  clearInterval(_pollTimer);
+  _qrId = null;
+  document.getElementById('onboarding').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('qrArea').innerHTML = `
+    <button class="btn" onclick="startLogin()">📱 获取二维码登录</button>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP</div>
+  `;
+}
+
+function showDashboard() {
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  load();
+}
+
+// ═══════════════════════════════════════════════
+// 看板（原有逻辑）
+// ═══════════════════════════════════════════════
+
 async function load() {
   document.getElementById('updateTime').textContent = '加载中...';
   try {
@@ -312,8 +439,27 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-document.querySelector('.title').addEventListener('click', load);
-load();
+// ═══════════════════════════════════════════════
+// 启动
+// ═══════════════════════════════════════════════
+(async function boot() {
+  try {
+    const resp = await fetch('/api/login/status');
+    const data = await resp.json();
+    if (data.loggedIn) {
+      showDashboard();
+    } else {
+      document.getElementById('onboarding').style.display = 'block';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+  } catch (e) {
+    // 连不上服务器，仍然展示引导页
+    document.getElementById('onboarding').style.display = 'block';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+})();
+
+document.querySelector('#dashboard .title').addEventListener('click', load);
 setInterval(load, 300000);
 </script>
 </body>

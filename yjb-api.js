@@ -229,6 +229,92 @@ function normalizeIndexData(yjbIndexData) {
   return result;
 }
 
+// ═══════════════════════════════════════════════
+// QR 码登录（无需 token）
+// ═══════════════════════════════════════════════
+
+/**
+ * 发送无需认证的 API 请求
+ */
+function noAuthRequest(method, apiPath) {
+  return new Promise((resolve, reject) => {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const sign = generateSign(apiPath, '', timestamp);
+
+    const u = new URL(API_BASE + apiPath);
+    const options = {
+      hostname: u.hostname,
+      port: u.port,
+      path: u.pathname + u.search,
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Request-Time': String(timestamp),
+        'Request-Sign': sign,
+        'Authorization': '',
+        'User-Agent': 'yjb-api-js/1.0',
+      },
+      timeout: 15000,
+    };
+
+    const client = u.protocol === 'https:' ? https : http;
+    const req = client.request(options, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(body);
+          if (json.code !== 200) {
+            return reject(new Error(json.message || `API 错误 code=${json.code}`));
+          }
+          resolve(json.data);
+        } catch (e) {
+          reject(new Error(`JSON 解析失败: ${body.substring(0, 200)}`));
+        }
+      });
+    });
+
+    req.on('error', (e) => reject(new Error(`网络错误: ${e.message}`)));
+    req.on('timeout', () => { req.destroy(); reject(new Error('请求超时')); });
+    req.end();
+  });
+}
+
+/**
+ * 获取登录二维码
+ * @returns {Promise<{id: string, url: string}>}
+ */
+async function fetchQRCode() {
+  return noAuthRequest('GET', '/qr_code');
+}
+
+/**
+ * 查询扫码状态
+ * @param {string} qrId - 二维码 ID
+ * @returns {Promise<{state: string, token?: string}>}
+ */
+async function checkQRState(qrId) {
+  const data = await noAuthRequest('GET', `/qr_code_state/${qrId}`);
+  // state=2 表示扫码成功，自动保存 token
+  if ((data.state === 2 || data.state === '2') && data.token) {
+    saveToken(data.token);
+  }
+  return data;
+}
+
+/**
+ * 保存 token 到 ~/.yjb_token.json
+ * @param {string} token
+ */
+function saveToken(token) {
+  fs.writeFileSync(TOKEN_FILE, JSON.stringify({
+    token,
+    timestamp: Math.floor(Date.now() / 1000),
+  }, null, 2), 'utf-8');
+  // 权限 600（Windows 上无效但无害）
+  try { fs.chmodSync(TOKEN_FILE, 0o600); } catch (e) { /* ignore */ }
+}
+
 module.exports = {
   loadToken,
   getIndexData,
@@ -241,4 +327,8 @@ module.exports = {
   normalizeHoldings,
   normalizeIndexData,
   TOKEN_FILE,
+  // ─── QR 码登录 ───
+  fetchQRCode,
+  checkQRState,
+  saveToken,
 };

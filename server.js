@@ -44,6 +44,44 @@ console.log('⏰ 定时任务已注册: 每个工作日 14:27 自动分析 + 发
 // ─── 静态文件 ───
 app.use(express.static(__dirname + '/public'));
 
+// ═══════════════════════════════════════════════════════════
+// 养基宝 扫码登录 API（无需 Token）
+// ═══════════════════════════════════════════════════════════
+
+// 获取登录二维码
+app.get('/api/login/qrcode', async (req, res) => {
+  try {
+    const data = await yjbApi.fetchQRCode();
+    // 用 qrserver 包装成图片 URL（前台直接 <img> 显示）
+    const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.url)}`;
+    res.json({ ok: true, qrId: data.id, qrUrl: data.url, qrImage });
+  } catch (e) {
+    res.json({ ok: false, error: e.message });
+  }
+});
+
+// 查询扫码状态
+app.get('/api/login/check/:qrId', async (req, res) => {
+  try {
+    const data = await yjbApi.checkQRState(req.params.qrId);
+    const state = data.state;
+    // state=1 等待扫码 / state=2 成功（token 已由 checkQRState 自动保存）
+    if (state === 2 || state === '2') {
+      res.json({ ok: true, status: 'done' });
+    } else {
+      res.json({ ok: true, status: 'waiting' });
+    }
+  } catch (e) {
+    res.json({ ok: false, status: 'error', error: e.message });
+  }
+});
+
+// 检查是否已登录
+app.get('/api/login/status', (req, res) => {
+  const token = yjbApi.loadToken();
+  res.json({ ok: true, loggedIn: !!token });
+});
+
 // ─── 基金历史数据（用于 MA 计算）───
 async function getHistoryNav(code, days = 30) {
   try {
