@@ -48,7 +48,7 @@
 
 ## 🧠 Signal Engine（信号引擎）v2.1
 
-`lib/signal-engine.js` 是核心决策引擎。它**不调用任何 LLM**，纯数学计算。
+信号引擎内置于 `fund-assistant.js` 和 `server.js`。**不调用任何 LLM**，纯数学计算。
 
 ```
 P0 风控层 → P1 仓位层 → P2 交易层 → P3 观察层
@@ -271,25 +271,19 @@ fund-diary/
 ├── deep-analyze.js            # 亏损/关注基金深度分析
 ├── update-holdings.js         # 持仓记录和交易管理
 ├── sector-volume.js           # 板块量价分析
-├── server.js                  # Web 看板服务
+├── server.js                  # Web 看板 + 扫码登录
 ├── lib/
-│   ├── signal-engine.js       # ★ Signal Engine — 规则决策核心
 │   ├── analytics.js           # 技术指标计算（MA/波动率/回撤）
-│   ├── data-layer.js          # 多源数据获取 + 超时重试 + Fallback
-│   ├── llm.js                 # LLM API 调用 + Multi-Perspective Prompt
-│   ├── fund-assistant-app.js  # 编排层：组合数据 → 信号 → AI → 邮件
-│   ├── email-render.js        # 邮件 HTML 渲染
-│   ├── email-service.js       # SMTP 发送
+│   ├── llm.js                 # LLM API 调用
 │   ├── news.js                # 财经新闻聚合
 │   ├── logger.js              # Winston 日志系统
-│   ├── colors.js / format.js / utils.js  # 工具
-├── yjb-api/                   # 养基宝 API 客户端
+│   └── colors.js / format.js / utils.js  # 工具
+├── yjb-api/                   # 养基宝 API 客户端 (Python 备选)
 ├── yjb-api.js                 # Node.js 养基宝客户端
 ├── holdings-io.js             # 持仓统一读写 + 字段归一化
 ├── fund-config.json           # 基金元数据 · 板块映射 · 策略配置
 ├── public/index.html          # Web 看板前端
 ├── .github/workflows/         # CI/CD
-│   ├── ci-test.yml            # Push → 语法检查 + 218 tests
 │   └── daily-analysis.yml     # 工作日 14:30 → 分析 + 邮件
 └── .env.example               # 环境变量模板
 ```

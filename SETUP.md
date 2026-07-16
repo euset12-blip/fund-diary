@@ -83,7 +83,7 @@ Codex 和 Cursor 不会像 Claude Code 那样自动读取 CLAUDE.md。Prompt 开
 
 ## 注意事项
 
-- **不要改** `lib/signal-engine.js` 和 `lib/email-render.js` —— 这两个是核心引擎，除非你理解信号优先级和 HH/HL 结构的逻辑
+- **不要改** `fund-assistant.js` 的信号引擎逻辑和邮件渲染部分 —— 除非你理解信号优先级和 HH/HL 结构的逻辑
 - **板块映射**是整个系统的基础，花时间做对。宁可少而精，不要凑数
 - **API Secret 不用配**——代码已内置默认值，AI 助手纠结这个的话让它跳过
 - `.env` 已在 `.gitignore` 里，不用担心泄露

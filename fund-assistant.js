@@ -27,7 +27,7 @@ const { formatMoney, formatPercent, formatProfit, barChart } = require('./lib/fo
 const { COLORS, c: color } = require('./lib/colors.js');
 const { calcVolatility, dynamicThresholds, calcMASlope, trendAdjustedMultipliers, countDaysBelowMA } = require('./lib/analytics.js');
 const log = require('./lib/logger.js')('fund-assistant');
-const { fetchSectorVolume, describeVolume, volumePriceSignal } = require('./sector-volume.js');
+const { fetchSectorVolume } = require('./sector-volume.js');
 
 // ═══════════════════════════════════════════════════════════
 // 邮件推送（需要 npm install nodemailer）

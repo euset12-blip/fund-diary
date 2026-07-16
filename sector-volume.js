@@ -125,8 +125,4 @@ function volumePriceSignal(pctChg, volumeRatio) {
   return { signal: '➖', level: 'neutral', desc: '量价正常' };
 }
 
-module.exports = {
-  fetchSectorVolume,
-  describeVolume,
-  volumePriceSignal,
-};
+module.exports = { fetchSectorVolume };
