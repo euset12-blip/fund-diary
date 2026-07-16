@@ -460,7 +460,7 @@ function renderMd(md) {
     .replace(/\n/g, '<br>');
 
   // 连续 <li> 包进 <ul>
-  html = html.replace(/((?:<li>[\\s\\S]*?<\\/li><br>)+)/g, '<ul>$1</ul>');
+  html = html.replace(/((?:<li>[\s\S]*?<\/li><br>)+)/g, '<ul>$1</ul>');
   return html;
 }
 
