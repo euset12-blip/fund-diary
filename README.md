@@ -153,6 +153,8 @@ pip install requests qrcode Pillow
 ```
 
 > 💡 如果 `pip` 报 "command not found"，试试 `pip3`。如果 `qrcode` 装不上，也可以用 `pip install requests` 只装必需的，程序会打印一个链接代替二维码。
+>
+> 💡 `npm install` 后如果看到 1 个 high severity 漏洞（nodemailer），不影响使用，可以忽略。想消除的话跑 `npm audit fix`。
 
 ### 2. 登录养基宝
 
@@ -183,7 +185,9 @@ node fund-assistant.js --holdings
 只有以下两个功能需要配置，不配不影响量化分析和评分排名：
 
 ```bash
-cp .env.example .env   # 生成配置文件
+cp .env.example .env    # macOS / Linux / Git Bash
+# Windows CMD / PowerShell 用:
+copy .env.example .env
 ```
 
 | 功能 | 要填的变量 | 不填的影响 |

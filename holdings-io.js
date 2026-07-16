@@ -42,7 +42,7 @@ async function readHoldings() {
   }
 
   const raw = yjbApi.normalizeHoldings(yjbData.holdings);
-  return raw.map(h => {
+  const result = raw.map(h => {
     const map = (config.fundIndexMap || {})[h.code] || {};
     return {
       code: h.code,
@@ -62,6 +62,8 @@ async function readHoldings() {
       shares: h.shares,
     };
   });
+  result._source = '养基宝';
+  return result;
 }
 
 /**
@@ -70,7 +72,7 @@ async function readHoldings() {
  */
 function readHoldingsFallback(config) {
   config = config || loadFundConfig();
-  return Object.keys(config.fundStrategy || {}).map(code => {
+  const result = Object.keys(config.fundStrategy || {}).map(code => {
     const map = (config.fundIndexMap || {})[code] || {};
     return {
       code,
@@ -89,6 +91,8 @@ function readHoldingsFallback(config) {
       shares: 0,
     };
   });
+  result._source = 'fund-config.json（本地配置，无实时数据）';
+  return result;
 }
 
 /**

@@ -105,7 +105,7 @@ async function loadHoldings() {
       profitPct[h.code] = h.totalInvested > 0 ? ((h.profit || 0) / h.totalInvested * 100) : 0;
     });
 
-    console.log(`📋 已加载持仓: ${holdings.length} 只基金 (来源: 养基宝)`);
+    console.log(`📋 已加载持仓: ${holdings.length} 只基金 (来源: ${holdings._source || '养基宝'})`);
     return { holdings, watchlist, profitLoss, profitPct, lastUpdated: new Date().toISOString().slice(0, 10) };
   } catch (e) {
     console.warn(`⚠️ 读取持仓失败: ${e.message}，使用 fund-config.json 默认持仓`);
@@ -2824,7 +2824,8 @@ async function main() {
     else if (arg === '--action') mode = 'action';
     else if (arg === '--holdings') {
       // 打印当前持仓表格
-      console.log(color(COLORS.bold, '\n📋 当前持仓列表 (来源: 养基宝)\n'));
+      const srcLabel = (holdingsData && holdingsData.holdings && holdingsData.holdings._source) || '养基宝';
+      console.log(color(COLORS.bold, `\n📋 当前持仓列表 (来源: ${srcLabel})\n`));
       if (holdingsData) {
         console.log(`  最后更新: ${holdingsData.lastUpdated || '--'}\n`);
         console.log(`  ${'代码'.padEnd(8)} ${'简称'.padEnd(14)} ${'板块'.padEnd(12)} ${'持有金额'.padEnd(10)} ${'投入本金'.padEnd(10)} ${'收益'.padEnd(10)} ${'状态'}`);

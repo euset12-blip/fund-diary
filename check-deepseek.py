@@ -18,7 +18,7 @@ def run(cmd, timeout=15):
 
 print("=== 检查 fund-assistant.js 结构 ===")
 print(run("wc -l /opt/fund-diary/fund-assistant.js"))
-print(run("grep -n 'function\|async function\|// ===\|=====' /opt/fund-diary/fund-assistant.js | head -60"))
+print(run(r"grep -n 'function\|async function\|// ===\|=====' /opt/fund-diary/fund-assistant.js | head -60"))
 
 print("\n=== 检查报告生成和发送部分 ===")
 print(run("sed -n '2050,2100p' /opt/fund-diary/fund-assistant.js"))
@@ -27,12 +27,12 @@ print("\n=== 检查 sendEmailNotification 函数 ===")
 print(run("sed -n '2191,2260p' /opt/fund-diary/fund-assistant.js"))
 
 print("\n=== 检查 --action 入口逻辑 ===")
-print(run("grep -n 'action\|--action\|processAction\|async function main\|if.*action' /opt/fund-diary/fund-assistant.js | head -30"))
+print(run(r"grep -n 'action\|--action\|processAction\|async function main\|if.*action' /opt/fund-diary/fund-assistant.js | head -30"))
 
 print("\n=== 检查 DeepSeek 相关 ===")
-print(run("grep -n -i 'deepseek\|openai\|fetch.*api\|https://api' /opt/fund-diary/fund-assistant.js | head -20"))
+print(run(r"grep -n -i 'deepseek\|openai\|fetch.*api\|https://api' /opt/fund-diary/fund-assistant.js | head -20"))
 
 print("\n=== 检查环境变量或配置中的 API key ===")
-print(run("grep -n 'DEEPSEEK\|OPENAI\|API_KEY\|apiKey' /opt/fund-diary/fund-config.json 2>/dev/null; echo '---'; cat /opt/fund-diary/.env 2>/dev/null; echo '---'; env 2>/dev/null | grep -i deepseek"))
+print(run(r"grep -n 'DEEPSEEK\|OPENAI\|API_KEY\|apiKey' /opt/fund-diary/fund-config.json 2>/dev/null; echo '---'; cat /opt/fund-diary/.env 2>/dev/null; echo '---'; env 2>/dev/null | grep -i deepseek"))
 
 ssh.close()
