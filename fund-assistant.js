@@ -2680,7 +2680,7 @@ async function sendEmailNotification(textContent, aiInsightText) {
   <div style="background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:14px;padding:24px 20px;color:#fff;margin-bottom:12px;box-shadow:0 4px 16px rgba(22,119,255,0.2)">
     <div style="font-size:12px;opacity:0.85;margin-bottom:6px">养基日记 · 投资看板</div>
     <div style="font-size:26px;font-weight:700;letter-spacing:0.5px">🔴 今日盘中操作指令</div>
-    <div style="font-size:13px;margin-top:10px;color:rgba(255,255,255,0.9)">${today} ${weekday} ${timeStr} · <span style="font-weight:700;color:#ffe066">⏰ 请在 15:00 前完成操作</span></div>
+    <div style="font-size:13px;margin-top:10px;color:#fff">${today} ${weekday} ${timeStr} · <span style="font-weight:700;color:#ffe066">⏰ 请在 15:00 前完成操作</span></div>
   </div>
 
   ${disputeHtml}
