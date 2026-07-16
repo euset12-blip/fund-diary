@@ -2235,7 +2235,9 @@ function escHtml(s) {
 
 /** 解析纯文本报告为结构化段落，输出卡片式 HTML */
 function textToEmailHtml(text) {
-  const lines = text.split('\n');
+  // 去除 ANSI 颜色/格式码，避免干扰标题检测
+  const cleanText = text.replace(/\x1b\[[0-9;]*m/g, '');
+  const lines = cleanText.split('\n');
   const blocks = [];       // [{ type, title, titleEmoji, lines: [] }]
   let current = null;
   let inHoldingsTable = false;
@@ -2547,12 +2549,37 @@ function renderSummaryBlock(block) {
 
 /** 纯文本块（免责声明等） */
 function renderTextBlock(block) {
-  const text = block.lines.join('<br>');
-  const isDisclaimer = text.includes('免责') || text.includes('投资有风险');
+  const raw = block.lines.join('\n');
+  const isDisclaimer = raw.includes('免责') || raw.includes('投资有风险');
+
+  // AI 解读块 Markdown → HTML，免责声明保持纯文本
+  const text = isDisclaimer
+    ? raw.replace(/\n/g, '<br>')
+    : mdToHtml(raw);
+
   return `
     <div style="margin:10px 0;padding:${isDisclaimer?'10px 14px':'8px 0'};font-size:${isDisclaimer?'11px':'13px'};color:${isDisclaimer?EMAIL_CSS.text3:EMAIL_CSS.text};line-height:1.8;${isDisclaimer?'background:'+EMAIL_CSS.bg+';border-radius:8px;text-align:center':''}">
       ${text}
     </div>`;
+}
+
+/**
+ * 轻量 Markdown → HTML（注意：输入已由 escHtml 转义，不重复转义）
+ */
+function mdToHtml(md) {
+  let html = md
+    .replace(/^## (.+)$/gm, '<h3 style="margin:16px 0 8px;font-size:15px;color:' + EMAIL_CSS.text + ';border-bottom:1px solid ' + EMAIL_CSS.border + ';padding-bottom:6px">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:' + EMAIL_CSS.text + '">$1</strong>')
+    .replace(/^- (.+)$/gm, '<li style="margin:4px 0;padding-left:4px">$1</li>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12px">$1</code>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+
+  html = html.replace(/((?:<li[^>]*>[\s\S]*?<\/li><br>)+)/g, (match) => {
+    return '<ul style="margin:8px 0;padding-left:20px">' + match.replace(/<br>$/, '') + '</ul>';
+  });
+
+  return html;
 }
 
 /**
@@ -2653,7 +2680,7 @@ async function sendEmailNotification(textContent, aiInsightText) {
   <div style="background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:14px;padding:24px 20px;color:#fff;margin-bottom:12px;box-shadow:0 4px 16px rgba(22,119,255,0.2)">
     <div style="font-size:12px;opacity:0.85;margin-bottom:6px">养基日记 · 投资看板</div>
     <div style="font-size:26px;font-weight:700;letter-spacing:0.5px">🔴 今日盘中操作指令</div>
-    <div style="font-size:13px;opacity:0.8;margin-top:10px">${today} ${weekday} ${timeStr} · 请在 15:00 前完成操作</div>
+    <div style="font-size:13px;margin-top:10px">${today} ${weekday} ${timeStr} · <span style="color:#fff;font-weight:700;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px">⏰ 请在 15:00 前完成操作</span></div>
   </div>
 
   ${disputeHtml}
