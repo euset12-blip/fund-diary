@@ -140,7 +140,6 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 | 需要 | 说明 |
 |------|------|
 | Node.js 20+ | [nodejs.org](https://nodejs.org) 下载安装 |
-| Python 3.8+ | macOS/Linux 自带；Windows 去 [python.org](https://python.org) 下载 |
 | 养基宝 APP（手机） | 苹果 App Store 或安卓应用商店搜"养基宝"，扫码登录用 |
 
 ### 1. 克隆 & 安装
@@ -149,34 +148,29 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 git clone https://github.com/euset12-blip/fund-diary.git
 cd fund-diary
 npm install
-pip install requests qrcode Pillow
 ```
 
-> 💡 如果 `pip` 报 "command not found"，试试 `pip3`。如果 `qrcode` 装不上，也可以用 `pip install requests` 只装必需的，程序会打印一个链接代替二维码。
->
-> 💡 `npm install` 后如果看到 1 个 high severity 漏洞（nodemailer），不影响使用，可以忽略。想消除的话跑 `npm audit fix`。
+> 💡 `npm install` 后如果看到 1 个 high severity 漏洞（nodemailer），不影响使用，可以忽略。
 
-### 2. 登录养基宝
+### 2. 启动 → 扫码登录
 
 ```bash
-python yjb-api/yjb_tool.py --login
+node server.js
 ```
 
-终端会显示一个二维码（Windows CMD 可能显示不了，会给出一个 URL 链接，复制到浏览器打开就行）。
+浏览器打开 `http://localhost:3848`，点击 **「📱 获取二维码登录」**，用**养基宝 APP 内的扫一扫**扫码（不要用手机相机，会跳微信）。
 
-打开手机上的**养基宝 APP**，扫码 → Token 自动保存到 `~/.yjb_token.json`，登录完成。
+扫码成功后自动跳转看板，Token 保存在 `~/.yjb_token.json`。
 
-> **不需要**手动配置 API Secret——代码已内置默认值。AI 助手如果追着你要 `YJB_API_SECRET`，告诉它："直接跑 `python yjb_tool.py --login`，让我扫码就行，Secret 用默认值。"
->
-> 💡 如果二维码没出来，加 `--debug` 看详细日志：`python yjb-api/yjb_tool.py --login --debug`
+> **不需要**装 Python、不需要配 API Secret——代码已内置默认值。
 
 ### 3. 验证
+
+看板里直接能看到你的持仓列表。也可以用命令行：
 
 ```bash
 node fund-assistant.js --holdings
 ```
-
-应该能看到你的基金列表。如果报 "未登录养基宝"，重新执行第 2 步扫码。
 
 到此为止，你已经有了一套**可工作的持仓分析系统**——不需要配任何 env。
 
@@ -196,6 +190,8 @@ copy .env.example .env
 | 📧 邮件推送 | `SMTP_USER` / `SMTP_PASS` / `SMTP_TO`（QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成授权码） | 只在终端输出，不发邮件 |
 
 其他变量（`YJB_API_SECRET`、`YJB_ACCOUNT_ID`、`VPS_*`）全部可选，注释掉就行。
+
+> 💡 如果你更喜欢命令行，仍然可以用 `python yjb-api/yjb_tool.py --login` 扫码（需要 Python 3.8+ 和 `pip install requests`）。
 
 ### 5. 运行
 

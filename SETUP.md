@@ -12,31 +12,26 @@
 ## 第一步：环境检查
 - 检查 Node.js >= 20，没装就报错并给出下载链接
 - npm install
-- 检查 Python >= 3.8
 
-## 第二步：养基宝登录（需要我扫二维码）
-
-> ⚠️ 这一步需要**我自己拿手机扫二维码**，你帮不了我。你只需要帮我把命令跑起来、把码打出来。
+## 第二步：启动 Web 看板 + 扫码登录
 
 ```bash
-pip install requests qrcode Pillow
-python yjb-api/yjb_tool.py --login
+node server.js
 ```
 
-终端会显示二维码 → 我打开手机上的**养基宝 APP** 扫码 → Token 自动保存，完成。
+浏览器打开 `http://localhost:3848`，点击「获取二维码登录」，我用手机上的**养基宝 APP** 扫码（注意：用 APP 内的扫一扫，不要用手机相机）。
 
-> **注意：不需要去养基宝 APP 里翻 API Secret。** 代码已内置默认值，直接 `--login` 就能用。
-> 如果 QR 码没显示出来，加 `--debug` 重跑。
+扫码成功后自动跳转看板，能看到持仓。
+
+> **不需要**装 Python、不需要配 API Secret。
 
 ## 第三步：验证持仓
-
-登录成功后，跑：
 
 ```bash
 node fund-assistant.js --holdings
 ```
 
-确认能看到基金列表。如果报"未登录养基宝"，重做第二步。
+确认能看到基金列表。
 
 ## 第四步：板块映射（最关键）
 
@@ -98,8 +93,8 @@ Codex 和 Cursor 不会像 Claude Code 那样自动读取 CLAUDE.md。Prompt 开
 
 ## 朋友之间的简版
 
-如果你朋友只是想快速体验、不追求完美，一句话就行：
+如果你朋友只是想快速体验，一句话：
 
-> "帮我部署这个基金分析工具：npm install，python yjb-api/yjb_tool.py --login 扫码登录，然后跑 node fund-assistant.js 看看效果。"
+> "帮我部署这个基金分析工具：npm install，node server.js，浏览器打开扫码就行。"
 
-不需要提 .env、不需要提 Secret。AI 助手会自己读 README.md、CLAUDE.md、源码，找到入口。
+不需要 Python、不需要 .env、不需要 Secret。
