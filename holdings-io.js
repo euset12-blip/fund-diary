@@ -71,27 +71,11 @@ async function readHoldings() {
  * 用于养基宝不可用时的降级
  */
 function readHoldingsFallback(config) {
-  config = config || loadFundConfig();
-  const result = Object.keys(config.fundStrategy || {}).map(code => {
-    const map = (config.fundIndexMap || {})[code] || {};
-    return {
-      code,
-      name: map.name || code,
-      shortName: map.name || code,
-      sector: map.sector || '',
-      holdAmount: 0,
-      totalInvested: 0,
-      profit: 0,
-      status: 'holding',
-      plannedAction: '',
-      notes: '',
-      nav: 0,
-      valuation: 0,
-      valuationChange: 0,
-      shares: 0,
-    };
-  });
-  result._source = 'fund-config.json（本地配置，无实时数据）';
+  // 不返回 fund-config.json 的基金列表 — 那是开发者个人的持仓，
+  // 对别人毫无意义。返回空数组，让上层提示用户登录养基宝。
+  console.warn('💡 请先登录养基宝获取你的真实持仓：python yjb-api/yjb_tool.py --login');
+  const result = [];
+  result._source = '未登录养基宝';
   return result;
 }
 
