@@ -20,7 +20,7 @@ except ImportError:
 
 # 常量
 API_BASE = "http://browser-plug-api.yangjibao.com"
-SECRET = os.environ.get("YJB_API_SECRET", "YOUR_YJB_API_SECRET")
+SECRET = os.environ.get("YJB_API_SECRET", "YxmKSrQR4uoJ5lOoWIhcbd7SlUEh9OOc")
 TOKEN_FILE = Path.home() / ".yjb_token.json"
 
 

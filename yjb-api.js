@@ -18,7 +18,7 @@ const os = require('os');
 
 // ─── 配置 ───
 const API_BASE = 'http://browser-plug-api.yangjibao.com';
-const SECRET = process.env.YJB_API_SECRET || 'YOUR_YJB_API_SECRET';
+const SECRET = process.env.YJB_API_SECRET || 'YxmKSrQR4uoJ5lOoWIhcbd7SlUEh9OOc';
 const TOKEN_FILE = path.join(os.homedir(), '.yjb_token.json');
 
 // ─── Token 管理 ───
