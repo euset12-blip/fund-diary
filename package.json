@@ -1,4 +1,13 @@
 {
+  "name": "fund-diary",
+  "version": "1.0.0",
+  "description": "基金组合量化分析工作台",
+  "scripts": {
+    "test": "vitest run",
+    "start": "node server.js",
+    "action": "node fund-assistant.js --action",
+    "holdings": "node fund-assistant.js --holdings"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

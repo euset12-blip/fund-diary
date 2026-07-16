@@ -128,7 +128,7 @@ Prompt 中每只基金标注了**算法立场**（持有/买入/止损/止盈）
 | Web 看板 | Express 5 + 原生 HTML/CSS/JS |
 | 数据源 | 东方财富 API、天天基金 API、养基宝 API |
 | 调度 | GitHub Actions（工作日 14:30 CST） |
-| 测试 | Vitest（218 tests · 7 files） |
+| 测试 | Vitest（166 tests · 5 files） |
 | 开发模式 | AI 协同开发（Claude Code） |
 
 ---
@@ -244,7 +244,7 @@ node server.js                        # 浏览器打开 http://localhost:3848
 | 流程保护 | `Promise.race` 6-8s 超时，单源异常不拖死全局 |
 | 结构化日志 | Winston + 按天滚动，`logs/` 自动归档 |
 | 错误边界 | 关键路径 try-catch，单只基金异常不影响全组合 |
-| CI 门禁 | 每次 push 自动语法检查 + 218 项单元测试 |
+| CI 门禁 | 每次 push 自动语法检查 + 166 项单元测试 |
 
 ---
 
@@ -255,7 +255,7 @@ node server.js                        # 浏览器打开 http://localhost:3848
 - **架构设计**：通过 Claude Code 进行系统分层和模块拆分
 - **代码生成**：Signal Engine / LLM Agent 编排由 AI 辅助生成，人工审核
 - **CI/CD 搭建**：GitHub Actions 工作流由 AI 根据项目结构自动配置
-- **测试覆盖**：218 项测试用例设计由 AI 辅助完成
+- **测试覆盖**：166 项测试用例设计由 AI 辅助完成
 - **MCP 集成**：探索了基于 Model Context Protocol 的多源数据接入
 
 > 高效利用 AI 节点构建自动化 Workflow，是当下工程团队稀缺的"AI Agent 落地能力"。
