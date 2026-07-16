@@ -7,9 +7,6 @@
 - `node fund-assistant.js` — 全组合分析（自动从养基宝拉持仓 + fund-config.json 补充元数据）
 - `node fund-assistant.js --action` — 下午2:30即时操作指令 + 邮件推送
 - `node fund-assistant.js --holdings` — 查看当前持仓
-- `node deep-analyze.js` — 亏损/待卖出基金深度分析
-- `node deep-analyze.js --all` — 全量深度分析
-- `node deep-analyze.js --loss` — 只看亏损的
 - `node update-holdings.js` — 查看持仓总览（金额+收益+占比）
 - `node update-holdings.js --buy <代码> <金额> [备注]` — 记录买入
 - `node update-holdings.js --sell <代码> <金额|50%> [备注]` — 记录卖出
@@ -42,7 +39,7 @@
 1. 确认养基宝可连接（`yjb-api.js`）
 2. 如果用户报告了操作（买入/卖出/加仓/减仓），用 `update-holdings.js` 更新持仓
 3. 跑 `node fund-assistant.js --action` 获取即时操作建议 + 自动发邮件
-4. 根据用户具体问题，用 `deep-analyze.js` 或 curl 拉特定数据
+4. 根据用户具体问题，用 curl 拉特定数据
 5. 分析完成后更新 `操作日志.md`
 6. 给出基于数据的建议（始终附免责声明）
 

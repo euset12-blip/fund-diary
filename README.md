@@ -268,7 +268,6 @@ node server.js                        # 浏览器打开 http://localhost:3848
 fund-diary/
 ├── fund-assistant.js          # CLI 入口 — 全组合分析 + 操作指令
 ├── fund-scoring.js            # 五维量化评分排名
-├── deep-analyze.js            # 亏损/关注基金深度分析
 ├── update-holdings.js         # 持仓记录和交易管理
 ├── sector-volume.js           # 板块量价分析
 ├── server.js                  # Web 看板 + 扫码登录
