@@ -171,7 +171,10 @@ app.get('/api/dashboard', async (req, res) => {
       // 优先级2：补仓 — 非黄金，跌破动态补仓线
       } else if (!isGold && devMA20 && devMA20 < dyn.dipBuy) {
         signal = 'dip_buy'; signalLabel = '补仓机会'; signalColor = '#3498db';
-      // 优先级3：止盈 — 高盈利 + 趋势转弱，或偏离超过止盈线
+      // 优先级3：保护性止盈 — 盈利中但跌破 MA20
+      } else if (profitPct > 5 && devMA20 && devMA20 < 0) {
+        signal = 'protective_profit'; signalLabel = '保护止盈'; signalColor = '#f39c12';
+      // 优先级4：止盈 — 高盈利 + 趋势转弱，或偏离超过止盈线
       } else if (profitPct >= 15 && devMA20 && devMA20 < 0) {
         signal = 'take_profit'; signalLabel = '止盈'; signalColor = '#f39c12';
       } else if (devMA20 && devMA20 > dyn.takeProfit && profitPct > 5) {
@@ -218,7 +221,13 @@ app.get('/api/dashboard', async (req, res) => {
     // 汇总
     const totalHoldAmount = funds.reduce((s, f) => s + f.holdAmount, 0);
     const totalProfit = funds.reduce((s, f) => s + f.profit, 0);
-    const signals = { stop: funds.filter(f => f.signal === 'stop_loss').length, dip: funds.filter(f => f.signal === 'dip_buy').length, hold: funds.filter(f => f.signal === 'hold').length };
+    const signals = {
+      stop: funds.filter(f => f.signal === 'stop_loss').length,
+      dip: funds.filter(f => f.signal === 'dip_buy').length,
+      profit: funds.filter(f => f.signal === 'take_profit' || f.signal === 'protective_profit').length,
+      hold: funds.filter(f => f.signal === 'hold').length,
+      total: funds.length,
+    };
 
     res.json({
       ok: true,

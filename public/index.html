@@ -306,11 +306,12 @@ function render(d) {
   // ═══ 今日操作（核心差异化！养基宝没有的） ═══
   const actions = document.getElementById('actions');
   const stops = d.funds.filter(f => f.signal === 'stop_loss');
+  const protects = d.funds.filter(f => f.signal === 'protective_profit');
   const dips = d.funds.filter(f => f.signal === 'dip_buy');
   const watches = d.funds.filter(f => f.signal === 'watch');
   const profits = d.funds.filter(f => f.signal === 'take_profit');
 
-  if (stops.length + dips.length + watches.length + profits.length === 0) {
+  if (stops.length + protects.length + dips.length + watches.length + profits.length === 0) {
     const holdCount = d.funds.filter(f => f.signal === 'hold').length;
     actions.innerHTML = `<div class="empty-actions">✅ 无需操作<br><span style="font-size:11px;color:#666">${holdCount}/${d.funds.length} 只基金趋势正常，继续持有</span></div>`;
   } else {
@@ -323,6 +324,17 @@ function render(d) {
           <div class="act-title">止损 — ${f.name}</div>
           <div class="act-desc">连续 ${f.consec} 日低于 MA20(${f.ma20?.toFixed(3)})，偏离 ${f.devMA20}%</div>
           <div class="act-fund">盈亏 ${f.profit>=0?'+':''}¥${f.profit?.toFixed(0)} · 建议${f.profit<0?'赎回':'减仓保利润'}</div>
+        </div>
+      </div>`;
+    });
+    // 保护性止盈（盈利中首次破 MA20）
+    protects.forEach(f => {
+      html += `<div class="action-card profit">
+        <div class="icon">🟠</div>
+        <div class="body">
+          <div class="act-title">保护止盈 — ${f.name}</div>
+          <div class="act-desc">盈利 ${f.profit>=0?'+':''}¥${f.profit?.toFixed(0)} (${f.profitPct?.toFixed(1)}%)，首次跌破 MA20(${f.ma20?.toFixed(3)})，偏离 ${f.devMA20}%</div>
+          <div class="act-fund">高位回撤信号 · 建议卖出 40-50% 锁定利润</div>
         </div>
       </div>`;
     });
@@ -379,7 +391,7 @@ function render(d) {
 
   // ─── 信号统计 ───
   document.getElementById('signalSummary').innerHTML =
-    `${stops.length>0?'🔴'+stops.length:''} ${dips.length>0?'🔵'+dips.length:''} 共${d.funds.length}只`;
+    `${stops.length>0?'🔴'+stops.length+' ':''}${protects.length>0?'🟠'+protects.length+' ':''}${dips.length>0?'🔵'+dips.length+' ':''}${profits.length>0?'💰'+profits.length+' ':''}共${d.funds.length}只`;
 
   // ─── 持仓列表 ───
   document.getElementById('fundList').innerHTML = d.funds.map(f => {
