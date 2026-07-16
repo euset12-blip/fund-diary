@@ -123,7 +123,8 @@
     margin-bottom: 16px;
   }
   #onboarding .qr-box img { display: block; width: 220px; height: 220px; }
-  #onboarding .qr-hint { font-size: 13px; color: var(--dim); margin-bottom: 8px; }
+  #onboarding .qr-hint { font-size: 13px; color: var(--dim); margin-bottom: 4px; }
+  #onboarding .qr-tip { font-size: 11px; color: #f39c12; margin-bottom: 8px; }
   #onboarding .qr-status { font-size: 12px; color: var(--gold); min-height: 18px; }
   #onboarding .btn {
     display: inline-block; padding: 12px 32px; border-radius: 8px; border: none;
@@ -149,7 +150,7 @@
   <div class="sub">基金组合量化分析工作台</div>
   <div id="qrArea">
     <button class="btn" onclick="startLogin()">📱 获取二维码登录</button>
-    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP</div>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP，用 APP 内扫一扫扫码</div>
   </div>
 </div>
 
@@ -216,7 +217,8 @@ async function startLogin() {
     _pollStart = Date.now();
     qrArea.innerHTML = `
       <div class="qr-box"><img src="${data.qrImage}" alt="二维码"></div>
-      <div class="qr-hint">📱 打开养基宝 APP 扫码登录</div>
+      <div class="qr-hint">📱 打开 <b>养基宝 APP</b>，用 APP 内的扫一扫扫码</div>
+      <div class="qr-tip">⚠️ 不要用手机相机扫（会跳微信），必须从养基宝 APP 里扫</div>
       <div class="qr-status" id="qrStatus">⏳ 等待扫码...</div>
       <button class="btn btn-ghost" onclick="startLogin()">🔄 重新获取</button>
     `;
@@ -267,7 +269,7 @@ function doRelogin() {
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('qrArea').innerHTML = `
     <button class="btn" onclick="startLogin()">📱 获取二维码登录</button>
-    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP</div>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">需要手机上装有养基宝 APP，用 APP 内扫一扫扫码</div>
   `;
 }
 
