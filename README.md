@@ -71,7 +71,7 @@ P0 风控层 → P1 仓位层 → P2 交易层 → P3 观察层
 | `dip_buy` | 回撤够深 + 短线企稳（大盘熊市自动屏蔽） | P2 |
 | `hold_through_dip` | hold_dip 策略基金破位不直接止损 | P2 |
 | `hold_dip_strong` | 多头排列 + HH/HL 双确认 | P3 |
-| `hold_bullish` / `market_bear_wait` | 多头但未确认 / 大盘压制 | P3 |
+| `hold_bullish` | 多头排列趋势向上 | P3 |
 
 ---
 
@@ -189,7 +189,7 @@ copy .env.example .env
 | 🤖 AI 解读 | `DEEPSEEK_API_KEY`（去 [platform.deepseek.com](https://platform.deepseek.com/api_keys) 注册即送额度） | 操作指令不含 AI 解读段，量化数据照常 |
 | 📧 邮件推送 | `SMTP_USER` / `SMTP_PASS` / `SMTP_TO`（QQ邮箱 → 设置 → 账户 → POP3/SMTP → 生成授权码） | 只在终端输出，不发邮件 |
 
-其他变量（`YJB_API_SECRET`、`YJB_ACCOUNT_ID`、`VPS_*`）全部可选，注释掉就行。
+其他变量（`YJB_API_SECRET`、`YJB_ACCOUNT_ID`、`YJB_TOKEN`）本地全部可选。**如果要用 GitHub Actions 定时发邮件**，需要把以下加到仓库 Secrets：`SMTP_USER`、`SMTP_PASS`、`SMTP_TO`、`YJB_TOKEN`（从本地 `~/.yjb_token.json` 复制）。
 
 > 💡 如果你更喜欢命令行，仍然可以用 `python yjb-api/yjb_tool.py --login` 扫码（需要 Python 3.8+ 和 `pip install requests`）。
 
@@ -220,8 +220,8 @@ node server.js                        # 浏览器打开 http://localhost:3848
 ─────────────────────────────────────────────────────────────────────────────────────────
  1   纳斯达克100      美股科技     82   ✅  85  83  80  --  --    +¥164.06     🟢 强烈加仓
  2   标普500 C        美股大盘     78   ✅  80  75  78  --  --    +¥61.84      🟢 考虑加仓
- 3   黄金ETF          黄金         72   ✅  70  73  72  --  --    +¥114.93     🟢 考虑加仓
- 4   红利低波          A股红利     58   ⚠️  55  60  58  50  45    -¥1301.22    🟡 持有观望
+ 3   标普500 C        美股大盘     78   ✅  80  75  78  --  --    +¥77.72      🟢 考虑加仓
+ 4   红利低波          A股红利     58   ⚠️  55  60  58  50  45    +¥7.89       🟡 持有观望
 ```
 
 ### 邮件报告
@@ -240,7 +240,7 @@ node server.js                        # 浏览器打开 http://localhost:3848
 |------|------|
 | HTTP 超时 | 全部外部请求 10s 超时 |
 | 自动重试 | 指数退避，最多 3 次 |
-| 多源 Fallback | 养基宝不可用 → `fund-config.json` 降级（至少知道持有哪些基金） |
+| 多源 Fallback | 养基宝不可用 → 提示用户登录，不降级到旧数据 |
 | 流程保护 | `Promise.race` 6-8s 超时，单源异常不拖死全局 |
 | 结构化日志 | Winston + 按天滚动，`logs/` 自动归档 |
 | 错误边界 | 关键路径 try-catch，单只基金异常不影响全组合 |
@@ -292,7 +292,7 @@ fund-diary/
 ## 🔒 安全
 
 - ⚠️ **绝不提交** `.env`、Token、API Key 到 Git（已在 `.gitignore` 排除）
-- 养基宝登录 Token 仅保存在 `~/.yjb_token.json`（权限 600）
+- 养基宝登录 Token 保存在 `~/.yjb_token.json`，CI 环境中通过 `YJB_TOKEN` 环境变量注入
 - 所有敏感值通过环境变量读取，CI 中使用 GitHub Secrets
 - 定期轮换 API Key 和邮箱授权码
 
