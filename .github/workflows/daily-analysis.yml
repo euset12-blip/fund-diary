@@ -29,6 +29,7 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           SMTP_TO: ${{ secrets.SMTP_TO }}
+          YJB_TOKEN: ${{ secrets.YJB_TOKEN }}
           YJB_ACCOUNT_ID: ${{ secrets.YJB_ACCOUNT_ID }}
           YJB_API_SECRET: ${{ secrets.YJB_API_SECRET }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}

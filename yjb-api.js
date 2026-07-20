@@ -22,7 +22,14 @@ const SECRET = process.env.YJB_API_SECRET || 'YxmKSrQR4uoJ5lOoWIhcbd7SlUEh9OOc';
 const TOKEN_FILE = path.join(os.homedir(), '.yjb_token.json');
 
 // ─── Token 管理 ───
+// 优先级: YJB_TOKEN 环境变量 > ~/.yjb_token.json 文件
+// GitHub Actions 等无头环境通过 Secret 注入 token
 function loadToken() {
+  // 1. 环境变量（GitHub Actions / CI）
+  if (process.env.YJB_TOKEN) {
+    return process.env.YJB_TOKEN;
+  }
+  // 2. 本地 token 文件（扫码登录后保存）
   try {
     if (!fs.existsSync(TOKEN_FILE)) return null;
     const data = JSON.parse(fs.readFileSync(TOKEN_FILE, 'utf-8'));
